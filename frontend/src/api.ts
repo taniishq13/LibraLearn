@@ -10,26 +10,55 @@ type ApiResponse<T> = {
 
 const getToken = () => localStorage.getItem("libralearn_token");
 
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
-      ...(options.headers ?? {})
+  const delays = [2000, 4000, 8000, 16000];
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt <= delays.length; attempt += 1) {
+    try {
+      const response = await fetch(`${API_URL}${path}`, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
+          ...(options.headers ?? {})
+        }
+      });
+
+      const data = (await response.json()) as ApiResponse<T>;
+
+      if (!response.ok) {
+        if (
+          attempt < delays.length &&
+          [502, 503, 504].includes(response.status)
+        ) {
+          await sleep(delays[attempt]);
+          continue;
+        }
+
+        throw new Error(data.message ?? "Something went wrong");
+      }
+
+      return data;
+    } catch (error) {
+      lastError = error;
+
+      if (attempt < delays.length) {
+        await sleep(delays[attempt]);
+        continue;
+      }
     }
-  });
-
-  const data = (await response.json()) as ApiResponse<T>;
-
-  if (!response.ok) {
-    throw new Error(data.message ?? "Something went wrong");
   }
 
-  return data;
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Failed to reach the server");
 }
 
 export const api = {
