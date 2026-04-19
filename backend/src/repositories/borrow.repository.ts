@@ -36,6 +36,25 @@ class BorrowRepository {
     return BorrowRecordModel.find().sort({ createdAt: -1 });
   }
 
+  getPopularBookIds(limit = 5): Promise<string[]> {
+    return BorrowRecordModel.aggregate([
+      {
+        $group: {
+          _id: "$bookId",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: {
+          count: -1
+        }
+      },
+      {
+        $limit: limit
+      }
+    ]).then((items) => items.map((item) => String(item._id)));
+  }
+
   updateRecord(
     id: string,
     data: Partial<BorrowRecordDocument>

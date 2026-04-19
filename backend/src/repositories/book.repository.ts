@@ -41,6 +41,28 @@ class BookRepository {
     }).sort({ createdAt: -1 });
   }
 
+  findByCategories(
+    categories: string[],
+    excludedIds: string[] = []
+  ): Promise<BookDocument[]> {
+    const filter: Record<string, unknown> = {
+      category: { $in: categories }
+    };
+
+    if (excludedIds.length > 0) {
+      filter._id = { $nin: excludedIds };
+    }
+
+    return BookModel.find(filter).sort({
+      averageRating: -1,
+      createdAt: -1
+    });
+  }
+
+  findByIds(ids: string[]): Promise<BookDocument[]> {
+    return BookModel.find({ _id: { $in: ids } });
+  }
+
   updateBook(id: string, data: UpdateBookInput): Promise<BookDocument | null> {
     return BookModel.findByIdAndUpdate(id, data, { new: true });
   }
