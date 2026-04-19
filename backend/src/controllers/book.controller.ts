@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { bookService } from "../services/book.service";
+import { AppError } from "../utils/AppError";
+import { isValidObjectId } from "../utils/isValidObjectId";
 
 class BookController {
   createBook = async (
@@ -43,7 +45,13 @@ class BookController {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
-      const book = await bookService.getBookById(String(req.params.id));
+      const id = String(req.params.id).trim();
+
+      if (!isValidObjectId(id)) {
+        throw new AppError("Invalid book id", 400);
+      }
+
+      const book = await bookService.getBookById(id);
 
       return res.status(200).json({
         success: true,
@@ -79,7 +87,13 @@ class BookController {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
-      const book = await bookService.updateBook(String(req.params.id), req.body);
+      const id = String(req.params.id).trim();
+
+      if (!isValidObjectId(id)) {
+        throw new AppError("Invalid book id", 400);
+      }
+
+      const book = await bookService.updateBook(id, req.body);
 
       return res.status(200).json({
         success: true,
@@ -97,7 +111,13 @@ class BookController {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
-      await bookService.deleteBook(String(req.params.id));
+      const id = String(req.params.id).trim();
+
+      if (!isValidObjectId(id)) {
+        throw new AppError("Invalid book id", 400);
+      }
+
+      await bookService.deleteBook(id);
 
       return res.status(200).json({
         success: true,

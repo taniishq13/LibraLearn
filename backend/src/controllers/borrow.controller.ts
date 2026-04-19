@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { AuthenticatedRequest } from "../interfaces/auth";
 import { borrowService } from "../services/borrow.service";
 import { AppError } from "../utils/AppError";
+import { isValidObjectId } from "../utils/isValidObjectId";
 
 class BorrowController {
   borrowBook = async (
@@ -15,6 +16,10 @@ class BorrowController {
 
       if (!authReq.user?.userId) {
         throw new AppError("Unauthorized", 401);
+      }
+
+      if (!isValidObjectId(bookId)) {
+        throw new AppError("Invalid book id", 400);
       }
 
       const record = await borrowService.borrowBook(authReq.user.userId, bookId);
@@ -40,6 +45,10 @@ class BorrowController {
 
       if (!authReq.user?.userId) {
         throw new AppError("Unauthorized", 401);
+      }
+
+      if (!isValidObjectId(recordId)) {
+        throw new AppError("Invalid borrow record id", 400);
       }
 
       const record = await borrowService.returnBook(recordId, authReq.user.userId);

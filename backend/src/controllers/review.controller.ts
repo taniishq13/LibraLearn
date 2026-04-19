@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { AuthenticatedRequest } from "../interfaces/auth";
 import { AppError } from "../utils/AppError";
 import { reviewService } from "../services/review.service";
+import { isValidObjectId } from "../utils/isValidObjectId";
 
 class ReviewController {
   addReview = async (
@@ -15,6 +16,10 @@ class ReviewController {
 
       if (!authReq.user?.userId) {
         throw new AppError("Unauthorized", 401);
+      }
+
+      if (!isValidObjectId(String(bookId))) {
+        throw new AppError("Invalid book id", 400);
       }
 
       const review = await reviewService.addReview({
@@ -40,7 +45,13 @@ class ReviewController {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
-      const reviews = await reviewService.getReviewsByBook(String(req.params.bookId));
+      const bookId = String(req.params.bookId).trim();
+
+      if (!isValidObjectId(bookId)) {
+        throw new AppError("Invalid book id", 400);
+      }
+
+      const reviews = await reviewService.getReviewsByBook(bookId);
 
       return res.status(200).json({
         success: true,
