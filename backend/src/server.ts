@@ -1,11 +1,21 @@
 import "dotenv/config";
 import createApp from "./app";
 import { config } from "./config";
+import { mongoConnection } from "./config/mongoConnection";
 
 const app = createApp();
 
-const PORT = config.port;
+const startServer = async (): Promise<void> => {
+  try {
+    await mongoConnection.connect();
 
-app.listen(PORT, () => {
-  console.log(`LibraLearn backend running on port ${PORT}`);
-});
+    app.listen(config.port, () => {
+      console.log(`LibraLearn backend running on port ${config.port}`);
+    });
+  } catch (error) {
+    console.error("Failed to connect to MongoDB", error);
+    process.exit(1);
+  }
+};
+
+void startServer();
