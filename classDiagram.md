@@ -41,6 +41,8 @@ class Book {
     +ISBN: String
     +totalCopies: int
     +availableCopies: int
+    +averageRating: double
+    +reviewCount: int
     +updateAvailability()
 }
 

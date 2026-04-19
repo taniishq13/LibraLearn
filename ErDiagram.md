@@ -19,6 +19,8 @@ erDiagram
         string ISBN
         int totalCopies
         int availableCopies
+        double averageRating
+        int reviewCount
     }
 
     BORROW_RECORDS {
