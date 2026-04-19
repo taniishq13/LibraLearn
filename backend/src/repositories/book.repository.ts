@@ -45,6 +45,18 @@ class BookRepository {
     return BookModel.findByIdAndUpdate(id, data, { new: true });
   }
 
+  updateRatings(
+    id: string,
+    averageRating: number,
+    reviewCount: number
+  ): Promise<BookDocument | null> {
+    return BookModel.findByIdAndUpdate(
+      id,
+      { averageRating, reviewCount },
+      { new: true }
+    );
+  }
+
   deleteBook(id: string): Promise<BookDocument | null> {
     return BookModel.findByIdAndDelete(id);
   }

@@ -7,6 +7,8 @@ export interface BookDocument extends Document {
   isbn: string;
   totalCopies: number;
   availableCopies: number;
+  averageRating: number;
+  reviewCount: number;
 }
 
 const bookSchema = new Schema<BookDocument>(
@@ -41,6 +43,14 @@ const bookSchema = new Schema<BookDocument>(
       type: Number,
       required: true,
       min: 0
+    },
+    averageRating: {
+      type: Number,
+      default: 0
+    },
+    reviewCount: {
+      type: Number,
+      default: 0
     }
   },
   {
