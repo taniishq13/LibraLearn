@@ -9,7 +9,7 @@ const startServer = async (): Promise<void> => {
   try {
     await mongoConnection.connect();
 
-    app.listen(config.port, () => {
+    app.listen(config.port, "0.0.0.0", () => {
       console.log(`LibraLearn backend running on port ${config.port}`);
     });
   } catch (error) {
