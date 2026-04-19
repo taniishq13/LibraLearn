@@ -1,0 +1,112 @@
+import { NextFunction, Request, Response } from "express";
+import { bookService } from "../services/book.service";
+
+class BookController {
+  createBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const book = await bookService.createBook(req.body);
+
+      return res.status(201).json({
+        success: true,
+        message: "Book added successfully",
+        data: book
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getBooks = async (
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const books = await bookService.getBooks();
+
+      return res.status(200).json({
+        success: true,
+        data: books
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getBookById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const book = await bookService.getBookById(String(req.params.id));
+
+      return res.status(200).json({
+        success: true,
+        data: book
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  searchBooks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const query = String(req.query.q ?? "").trim();
+
+      const books = query ? await bookService.searchBooks(query) : [];
+
+      return res.status(200).json({
+        success: true,
+        data: books
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const book = await bookService.updateBook(String(req.params.id), req.body);
+
+      return res.status(200).json({
+        success: true,
+        message: "Book updated successfully",
+        data: book
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      await bookService.deleteBook(String(req.params.id));
+
+      return res.status(200).json({
+        success: true,
+        message: "Book deleted successfully"
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+export const bookController = new BookController();
