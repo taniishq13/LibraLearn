@@ -2,6 +2,7 @@ import { RecommendationStrategy } from "./recommendation.strategy";
 import { BookDocument } from "../models/Book";
 import { borrowRepository } from "../repositories/borrow.repository";
 import { bookRepository } from "../repositories/book.repository";
+import { RECOMMENDATION_LIMIT } from "../utils/constants";
 
 class BorrowHistoryBasedStrategy implements RecommendationStrategy {
   async getRecommendations(userId: string): Promise<BookDocument[]> {
@@ -24,7 +25,7 @@ class BorrowHistoryBasedStrategy implements RecommendationStrategy {
   }
 
   private async getFallbackRecommendations(): Promise<BookDocument[]> {
-    const popularIds = await borrowRepository.getPopularBookIds(5);
+    const popularIds = await borrowRepository.getPopularBookIds(RECOMMENDATION_LIMIT);
     if (popularIds.length === 0) {
       return [];
     }

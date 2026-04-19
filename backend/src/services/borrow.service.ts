@@ -2,10 +2,11 @@ import { AppError } from "../utils/AppError";
 import { bookRepository } from "../repositories/book.repository";
 import { borrowRepository } from "../repositories/borrow.repository";
 import { BorrowRecordDocument } from "../models/BorrowRecord";
-
-const BORROW_DAYS = 14;
-const FINE_PER_DAY = 10;
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
+import {
+  BORROW_DAYS,
+  FINE_PER_DAY,
+  MS_PER_DAY
+} from "../utils/constants";
 
 class BorrowService {
   async borrowBook(userId: string, bookId: string): Promise<BorrowRecordDocument> {
