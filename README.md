@@ -28,6 +28,12 @@ npm install
 npm run dev
 ```
 
+To load demo data:
+
+```bash
+npm run seed
+```
+
 Create a `.env` file from `.env.example` before starting:
 
 ```env
@@ -62,3 +68,8 @@ VITE_API_URL=http://localhost:5000/api
 - `POST /api/borrow/:recordId/return`
 - `POST /api/reviews`
 - `GET /api/recommendations`
+
+## Demo Credentials
+
+- Librarian: `librarian@libralearn.com` / `Password123`
+- Student: `rahul@libralearn.com` / `Password123`
